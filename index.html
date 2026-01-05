@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sebuah Hadiah Kecil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; 
+        }
+
+        /* --- STYLING PINTU --- */
+        .door-handle {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 0.5rem; height: 5rem; background-color: #f59e0b;
+            border-radius: 9999px; box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+        }
+
+        /* --- ANIMASI BALON --- */
+        @keyframes flyAndSway {
+            0% { transform: translateY(0) translateX(0); opacity: 1; }
+            100% { transform: translateY(-110vh) translateX(0); opacity: 0; }
+        }
+        .balloon {
+            position: absolute; bottom: -100px; font-size: 3rem; z-index: 45;
+            animation-name: flyAndSway; animation-timing-function: linear;
+            animation-iteration-count: 1; will-change: transform;
+        }
+
+        /* --- STYLING SLIDER --- */
+        .slide-page {
+            width: 100vw; height: 100vh; flex-shrink: 0;
+            overflow-y: auto; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            position: relative; z-index: 10; background-color: transparent;
+        }
+
+        .slider-arrow {
+            position: fixed; top: 50%; transform: translateY(-50%); z-index: 60;
+            background-color: rgba(255, 255, 255, 0.5); backdrop-filter: blur(4px);
+            border-radius: 9999px; padding: 0.75rem; cursor: pointer;
+            transition: all 0.2s; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .slider-arrow:hover { background-color: rgba(255, 255, 255, 0.8); transform: translateY(-50%) scale(1.1); }
+
+        /* --- DEKORASI BACKGROUND --- */
+        .background-decoration { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .decoration-element {
+            position: absolute; border-radius: 50%; opacity: 0.3; filter: blur(50px);
+            background: linear-gradient(135deg, #fcd34d, #f97316); mix-blend-mode: multiply;
+        }
+        .decoration-1 { width: 300px; height: 300px; top: 10%; left: -5%; }
+        .decoration-2 { width: 400px; height: 400px; bottom: 5%; right: -10%; opacity: 0.2; }
+        
+        body::before {
+            content: ''; position: fixed; inset: 0;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB2aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZmlsdGVyIGlkPSJub2lzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodGg9IjEwMCUiPgogICAgPGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNzUiIG51bU9jdGF2ZXM9IjIiIHNlZWQ9IjAiIHN0aXRjaFRpbGVzPSJub2lzZSIvPgogICAgPGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPgogICAgPGZlQ29sb3JNYXRyaXggdHlwZT0ibHVtaW5hbmNlVG9Alpha"IHJvb3RNb2Q9IjEuNSIgaW50ZXJjZXB0PSJyZXN1bHQiIG9wZXJhdG9yPSJpbiIgaW5wdXQyPSJzb3VyY2VBbHBoYSIgdmFsdWVzPSIxIDAgMCAwIDAgMCAxIDAgMCAwIDAgMCAxIDAgMCAwIDAgMCAwIDAgMCIvPgogICAgPGZlQ29tcG9zaXRlIG9wZXJhdG9yPSJpbiIgaW5wdXQyPSJzb3VyY2VBbHBoYSIgdmFsdWVzPSIxIDAgMCAwIDAgMCAxIDAgMCAwIDAgMCAxIDAgMCAwIDAgMCAwIDAgMCIvPgogIDwvZmlsdGVyPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNGRkZGRkYiIGZpbHRlcj0idXJsKCNub2lzZSkwIiBvcGFjaXR5PSIwLjA1Ii8+Cjwvc3ZnPg==');
+            opacity: 0.5; pointer-events: none; z-index: 1; mix-blend-mode: soft-light;
+        }
+
+        .glass-box {
+            background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px);
+            border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- STYLING LILIN --- */
+        .candle-container { position: relative; cursor: pointer; transition: transform 0.2s; }
+        .candle-container:hover { transform: scale(1.05); }
+        .flame {
+            position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+            width: 20px; height: 30px; background: orange; border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px orange, 0 0 20px yellow;
+            animation: flicker 0.5s infinite alternate; z-index: 20;
+        }
+        .flame.off { display: none; }
+        @keyframes flicker { 0% { opacity: 1; transform: translateX(-50%) scale(1); } 100% { opacity: 0.8; transform: translateX(-50%) scale(1.1); } }
+        
+        .smoke {
+            position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+            width: 10px; height: 20px; background: rgba(100,100,100,0.5); border-radius: 50%;
+            opacity: 0; z-index: 19;
+        }
+        @keyframes smokeUp { 0% { opacity: 0.8; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(-40px); } }
+
+        /* Musik Control Button (Manual Backup) */
+        #musicControl {
+            position: fixed; bottom: 20px; right: 20px; z-index: 100;
+            background: white; padding: 10px; border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #musicControl:hover { transform: scale(1.1); }
+        
+        /* Play Button Style di Pintu */
+        .play-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 9999px;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+        .play-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+
+<body class="bg-yellow-50 relative">
+
+    <!-- AUDIO ELEMENT -->
+    <audio id="bgMusic" loop>
+        <source src="https://youtu.be/wqdV1ybjzOE?si=i-0HeghFDTiQ1e4A&t=4" type="audio/ogg">
+        <!-- Cadangan link lain -->
+        <!-- <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"> -->
+    </audio>
+
+    <!-- BUTTON MUSIK MANUAL (POJOK KANAN BAWAH) -->
+    <button id="musicControl" title="Play/Pause Music">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+        </svg>
+    </button>
+
+    <div class="background-decoration">
+        <div class="decoration-element decoration-1"></div>
+        <div class="decoration-element decoration-2"></div>
+    </div>
+
+    <main id="sliderWrapper" class="transition-opacity duration-1000 opacity-0 relative z-20">
+        <div id="sliderContainer" class="flex transition-transform duration-700 ease-in-out">
+
+            <!-- SLIDE 1: INTRO -->
+            <section class="slide-page text-center p-8">
+                <div class="space-y-4">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-800">
+                        Selamat Ulang Tahun,
+                    </h1>
+                    <p class="text-2xl sm:text-3xl text-amber-700 font-semibold">
+                        Nana
+                    </p>
+                    <p class="text-lg text-neutral-600 max-w-md mx-auto pt-4">
+                        Ada pesan singkat buat kamu... <br>
+                        <span class="text-sm text-gray-500">(Geser ke kanan 👉)</span>
+                    </p>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: SURAT SINGKAT -->
+            <section class="slide-page p-8">
+                <div class="glass-box max-w-2xl w-full p-8 text-left">
+                    <div class="mb-4 text-amber-600 font-bold tracking-widest uppercase text-xs">Pesan Untukmu</div>
+                    <div class="space-y-6 text-neutral-700 leading-relaxed text-lg">
+                        <p>Hei Nana,</p>
+                        <p>
+                            Happy birthday ya. Semoga di umur yang baru ini kamu makin bahagia, sehat selalu, dan semua yang kamu harapkan bisa tercapai.
+                        </p>
+                        <p>
+                            Jaga diri baik-baik ya.
+                        </p>
+                        <p class="text-right font-semibold text-neutral-800 mt-8">
+                            Salam,<br>[Nama Kamu]
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: TIUP LILIN (SIMPLE GAME) -->
+            <section class="slide-page p-8">
+                <div class="glass-box max-w-lg w-full p-8 text-center">
+                    <h2 class="text-2xl font-bold text-neutral-800 mb-2">Make a Wish ✨</h2>
+                    <p class="text-neutral-600 mb-8">Sebelum selesai, coba doa dalam hati terus tiup (klik) lilinnya.</p>
+                    
+                    <div class="flex justify-center items-end h-40 mb-4">
+                        <!-- Kue Simple -->
+                        <div id="cake" class="candle-container relative" onclick="blowCandle()">
+                            <div class="w-32 h-20 bg-amber-200 rounded-lg relative flex items-center justify-center border-b-8 border-amber-300 shadow-lg">
+                                <span class="text-2xl">🎂</span>
+                                <!-- Lilin -->
+                                <div class="absolute -top-8 w-4 h-8 bg-red-400 rounded-sm"></div>
+                                <!-- Api -->
+                                <div id="flame" class="flame"></div>
+                                <!-- Asap -->
+                                <div id="smoke" class="smoke"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p id="wishMessage" class="text-lg font-semibold text-amber-700 opacity-0 transition-opacity duration-1000">
+                        Semoga terkabul! 🙏
+                    </p>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: PENUTUP -->
+            <section class="slide-page text-center p-8">
+                <div class="space-y-6">
+                    <div class="text-6xl animate-bounce py-4">
+                        🎉
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-neutral-800">
+                        Have a Great Year Ahead!
+                    </h2>
+                    <button onclick="location.reload()" class="mt-8 px-6 py-2 bg-white border border-amber-200 text-amber-600 rounded-full text-sm hover:bg-amber-50 transition-colors">
+                        Replay ↺
+                    </button>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <button id="prevButton" class="slider-arrow left-4 hidden">
+            <svg class="w-6 h-6 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <button id="nextButton" class="slider-arrow right-4 hidden">
+            <svg class="w-6 h-6 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </main>
+
+    <!-- PINTU (TANPA POPUP USERNAME) -->
+    <div id="doorContainer" class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 cursor-pointer bg-black/20">
+        <div id="leftDoor" class="absolute top-0 left-0 w-1/2 h-full bg-gray-900 transition-transform duration-1000 ease-in-out">
+            <span class="door-handle right-4"></span>
+        </div>
+        <div id="rightDoor" class="absolute top-0 right-0 w-1/2 h-full bg-gray-900 transition-transform duration-1000 ease-in-out">
+            <span class="door-handle left-4"></span>
+        </div>
+        
+        <!-- TOMBOL UTAMA (TRIGGER MUSIK & PINTU) -->
+        <div id="tapButton" class="relative z-10 text-center text-white transition-opacity duration-300">
+            <!-- Dibuat seperti tombol jelas -->
+            <div class="play-btn flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="text-5xl animate-bounce">🎵</div>
+                <h2 class="text-2xl font-bold">Putar Lagu</h2>
+                <p class="text-sm text-gray-200 group-hover:text-white">Klik untuk membuka kado...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIKA UTAMA ---
+        const doorContainer = document.getElementById('doorContainer');
+        const tapButton = document.getElementById('tapButton');
+        const sliderWrapper = document.getElementById('sliderWrapper');
+        const bgMusic = document.getElementById('bgMusic'); 
+        const musicControl = document.getElementById('musicControl');
+        
+        // FUNGSI MUSIK AMAN
+        function playMusicSafe() {
+            if(bgMusic) {
+                bgMusic.volume = 0.5; 
+                bgMusic.play().then(() => {
+                    console.log("Audio playing...");
+                }).catch(e => {
+                    console.log("Audio play failed (biasa terjadi karena autoplay policy):", e);
+                });
+            }
+        }
+
+        // TOMBOL MUSIK MANUAL (Jaga-jaga)
+        musicControl.addEventListener('click', (e) => {
+            e.stopPropagation(); // Biar ga klik tembus
+            if (bgMusic.paused) {
+                playMusicSafe();
+            } else {
+                bgMusic.pause();
+            }
+        });
+
+        // 1. TRIGGER PINTU & MUSIK
+        // Klik di mana saja di area pintu (atau tombolnya) akan memicu ini
+        doorContainer.addEventListener('click', (e) => {
+            
+            // A. NYALAIN MUSIK
+            playMusicSafe();
+            
+            // B. BUKA PINTU & ANIMASI
+            document.getElementById('leftDoor').style.transform = 'translateX(-100%)';
+            document.getElementById('rightDoor').style.transform = 'translateX(100%)';
+            tapButton.style.opacity = '0';
+            doorContainer.style.cursor = 'default';
+
+            // Balon & Slider muncul
+            spawnBalloons();
+            setTimeout(() => {
+                sliderWrapper.style.opacity = '1';
+                updateArrows();
+            }, 500);
+            
+            // Pintu pindah ke belakang
+            setTimeout(() => doorContainer.style.zIndex = '-10', 1500);
+
+        }, { once: true }); // Cuma bisa diklik sekali buat buka
+
+        // Fungsi Balon
+        function spawnBalloons() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const b = document.createElement('div');
+                    b.innerHTML = '🎈';
+                    b.className = 'balloon';
+                    b.style.left = Math.random() * 90 + 5 + 'vw';
+                    b.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                    document.body.appendChild(b);
+                    setTimeout(() => b.remove(), 7000);
+                }, Math.random() * 1500);
+            }
+        }
+
+        // 4. Slider Logic
+        const sliderContainer = document.getElementById('sliderContainer');
+        const prevBtn = document.getElementById('prevButton');
+        const nextBtn = document.getElementById('nextButton');
+        const slides = document.querySelectorAll('.slide-page');
+        let currentSlide = 0;
+
+        function goToSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            sliderContainer.style.transform = `translateX(-${index * 100}vw)`;
+            currentSlide = index;
+            updateArrows();
+        }
+
+        function updateArrows() {
+            prevBtn.classList.toggle('hidden', currentSlide === 0);
+            nextBtn.classList.toggle('hidden', currentSlide === slides.length - 1);
+        }
+
+        nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+        prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+
+        // 5. Minigame Tiup Lilin
+        let isBlown = false;
+        function blowCandle() {
+            if (isBlown) return; 
+            isBlown = true;
+            
+            const flame = document.getElementById('flame');
+            flame.classList.add('off');
+            
+            const smoke = document.getElementById('smoke');
+            smoke.style.animation = 'smokeUp 1s forwards';
+
+            document.getElementById('wishMessage').style.opacity = '1';
+        }
+    </script>
+</body>
+</html>
